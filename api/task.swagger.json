@@ -151,6 +151,12 @@
       "properties": {
         "task_id": {
           "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
         }
       }
     },
