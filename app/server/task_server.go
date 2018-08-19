@@ -54,15 +54,14 @@ func (s *taskServiceServerImpl) CreateTask(ctx context.Context, req *api_pb.Crea
 		panic(err)
 	}
 
-	var task todolist.Task
-	task.Title = "test"
+	task := util.PBTaskToTask(ctx, req.Task)
 
 	err = task.Insert(ctx, db, boil.Infer())
 	if err != nil {
 		panic(err)
 	}
 
-	return util.TaskToPB(ctx, &task), nil
+	return util.TaskToPB(ctx, task), nil
 }
 
 func (s *taskServiceServerImpl) UpdateTask(ctx context.Context, req *api_pb.UpdateTaskRequest) (*api_pb.Task, error) {

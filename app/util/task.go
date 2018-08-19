@@ -2,6 +2,8 @@ package util
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"time"
 
 	api_pb "github.com/rerost/todolist-server/api"
@@ -28,4 +30,35 @@ func TaskToPB(ctx context.Context, task *todolist.Task) *api_pb.Task {
 	}
 
 	return pb
+}
+
+// PBTaskToTask is hogehoge
+func PBTaskToTask(ctx context.Context, pbTask *api_pb.Task) *todolist.Task {
+	var ID int
+	if pbTask.TaskId != "" {
+		_ID, err := strconv.Atoi(pbTask.TaskId)
+		check(err)
+		ID = _ID
+	}
+
+	var CreatedAt time.Time
+	if pbTask.TaskId != "" {
+		_CreatedAt, err := time.Parse(time.RFC3339, pbTask.CreatedAt)
+		check(err)
+		CreatedAt = _CreatedAt
+	}
+
+	return &todolist.Task{
+		ID:        ID,
+		Title:     pbTask.Title,
+		CreatedAt: CreatedAt,
+	}
+}
+
+// TODO: Replace
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
 }

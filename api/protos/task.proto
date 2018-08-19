@@ -19,7 +19,7 @@ service TaskService {
   rpc CreateTask (CreateTaskRequest) returns (Task) {
     option (google.api.http) = {
       post: "/tasks"
-      body: "task"
+      body: "*"
     };
   }
   rpc UpdateTask (UpdateTaskRequest) returns (Task) {

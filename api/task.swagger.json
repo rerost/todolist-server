@@ -46,7 +46,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiTask"
+              "$ref": "#/definitions/apiCreateTaskRequest"
             }
           }
         ],
@@ -135,6 +135,14 @@
     }
   },
   "definitions": {
+    "apiCreateTaskRequest": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/apiTask"
+        }
+      }
+    },
     "apiListTasksResponse": {
       "type": "object",
       "properties": {
