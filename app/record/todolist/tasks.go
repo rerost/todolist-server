@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -23,9 +22,9 @@ import (
 
 // Task is an object representing the database table.
 type Task struct {
-	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Title     null.String `boil:"title" json:"title,omitempty" toml:"title" yaml:"title,omitempty"`
-	CreatedAt null.Time   `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Title     string    `boil:"title" json:"title" toml:"title" yaml:"title"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *taskR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L taskL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -59,8 +58,8 @@ type taskL struct{}
 
 var (
 	taskColumns               = []string{"id", "title", "created_at"}
-	taskColumnsWithoutDefault = []string{"id", "title", "created_at"}
-	taskColumnsWithDefault    = []string{}
+	taskColumnsWithoutDefault = []string{"title", "created_at"}
+	taskColumnsWithDefault    = []string{"id"}
 	taskPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -239,7 +238,7 @@ func (q taskQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Task, e
 		if errors.Cause(err) == sql.ErrNoRows {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "record: failed to execute a one query for tasks")
+		return nil, errors.Wrap(err, "todolist: failed to execute a one query for tasks")
 	}
 
 	if err := o.doAfterSelectHooks(ctx, exec); err != nil {
@@ -255,7 +254,7 @@ func (q taskQuery) All(ctx context.Context, exec boil.ContextExecutor) (TaskSlic
 
 	err := q.Bind(ctx, exec, &o)
 	if err != nil {
-		return nil, errors.Wrap(err, "record: failed to assign all query results to Task slice")
+		return nil, errors.Wrap(err, "todolist: failed to assign all query results to Task slice")
 	}
 
 	if len(taskAfterSelectHooks) != 0 {
@@ -278,7 +277,7 @@ func (q taskQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: failed to count tasks rows")
+		return 0, errors.Wrap(err, "todolist: failed to count tasks rows")
 	}
 
 	return count, nil
@@ -293,7 +292,7 @@ func (q taskQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return false, errors.Wrap(err, "record: failed to check if tasks exists")
+		return false, errors.Wrap(err, "todolist: failed to check if tasks exists")
 	}
 
 	return count > 0, nil
@@ -325,7 +324,7 @@ func FindTask(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols
 		if errors.Cause(err) == sql.ErrNoRows {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "record: unable to select from tasks")
+		return nil, errors.Wrap(err, "todolist: unable to select from tasks")
 	}
 
 	return taskObj, nil
@@ -335,14 +334,14 @@ func FindTask(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols
 // See boil.Columns.InsertColumnSet documentation to understand column list inference for inserts.
 func (o *Task) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
 	if o == nil {
-		return errors.New("record: no tasks provided for insertion")
+		return errors.New("todolist: no tasks provided for insertion")
 	}
 
 	var err error
 	currTime := time.Now().In(boil.GetLocation())
 
-	if queries.MustTime(o.CreatedAt).IsZero() {
-		queries.SetScanner(&o.CreatedAt, currTime)
+	if o.CreatedAt.IsZero() {
+		o.CreatedAt = currTime
 	}
 
 	if err := o.doBeforeInsertHooks(ctx, exec); err != nil {
@@ -402,7 +401,7 @@ func (o *Task) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	}
 
 	if err != nil {
-		return errors.Wrap(err, "record: unable to insert into tasks")
+		return errors.Wrap(err, "todolist: unable to insert into tasks")
 	}
 
 	if !cached {
@@ -437,7 +436,7 @@ func (o *Task) Update(ctx context.Context, exec boil.ContextExecutor, columns bo
 			wl = strmangle.SetComplement(wl, []string{"created_at"})
 		}
 		if len(wl) == 0 {
-			return 0, errors.New("record: unable to update tasks, could not build whitelist")
+			return 0, errors.New("todolist: unable to update tasks, could not build whitelist")
 		}
 
 		cache.query = fmt.Sprintf("UPDATE \"tasks\" SET %s WHERE %s",
@@ -460,12 +459,12 @@ func (o *Task) Update(ctx context.Context, exec boil.ContextExecutor, columns bo
 	var result sql.Result
 	result, err = exec.ExecContext(ctx, cache.query, values...)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to update tasks row")
+		return 0, errors.Wrap(err, "todolist: unable to update tasks row")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: failed to get rows affected by update for tasks")
+		return 0, errors.Wrap(err, "todolist: failed to get rows affected by update for tasks")
 	}
 
 	if !cached {
@@ -483,12 +482,12 @@ func (q taskQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to update all for tasks")
+		return 0, errors.Wrap(err, "todolist: unable to update all for tasks")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to retrieve rows affected for tasks")
+		return 0, errors.Wrap(err, "todolist: unable to retrieve rows affected for tasks")
 	}
 
 	return rowsAff, nil
@@ -502,7 +501,7 @@ func (o TaskSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	}
 
 	if len(cols) == 0 {
-		return 0, errors.New("record: update all requires at least one column argument")
+		return 0, errors.New("todolist: update all requires at least one column argument")
 	}
 
 	colNames := make([]string, len(cols))
@@ -532,12 +531,12 @@ func (o TaskSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to update all in task slice")
+		return 0, errors.Wrap(err, "todolist: unable to update all in task slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to retrieve rows affected all in update all task")
+		return 0, errors.Wrap(err, "todolist: unable to retrieve rows affected all in update all task")
 	}
 	return rowsAff, nil
 }
@@ -546,12 +545,12 @@ func (o TaskSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
 func (o *Task) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
-		return errors.New("record: no tasks provided for upsert")
+		return errors.New("todolist: no tasks provided for upsert")
 	}
 	currTime := time.Now().In(boil.GetLocation())
 
-	if queries.MustTime(o.CreatedAt).IsZero() {
-		queries.SetScanner(&o.CreatedAt, currTime)
+	if o.CreatedAt.IsZero() {
+		o.CreatedAt = currTime
 	}
 
 	if err := o.doBeforeUpsertHooks(ctx, exec); err != nil {
@@ -607,7 +606,7 @@ func (o *Task) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 		)
 
 		if len(update) == 0 {
-			return errors.New("record: unable to upsert tasks, could not build update column list")
+			return errors.New("todolist: unable to upsert tasks, could not build update column list")
 		}
 
 		conflict := conflictColumns
@@ -650,7 +649,7 @@ func (o *Task) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 		_, err = exec.ExecContext(ctx, cache.query, vals...)
 	}
 	if err != nil {
-		return errors.Wrap(err, "record: unable to upsert tasks")
+		return errors.Wrap(err, "todolist: unable to upsert tasks")
 	}
 
 	if !cached {
@@ -666,7 +665,7 @@ func (o *Task) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 // Delete will match against the primary key column to find the record to delete.
 func (o *Task) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
-		return 0, errors.New("record: no Task provided for delete")
+		return 0, errors.New("todolist: no Task provided for delete")
 	}
 
 	if err := o.doBeforeDeleteHooks(ctx, exec); err != nil {
@@ -683,12 +682,12 @@ func (o *Task) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, er
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to delete from tasks")
+		return 0, errors.Wrap(err, "todolist: unable to delete from tasks")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: failed to get rows affected by delete for tasks")
+		return 0, errors.Wrap(err, "todolist: failed to get rows affected by delete for tasks")
 	}
 
 	if err := o.doAfterDeleteHooks(ctx, exec); err != nil {
@@ -701,19 +700,19 @@ func (o *Task) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, er
 // DeleteAll deletes all matching rows.
 func (q taskQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
-		return 0, errors.New("record: no taskQuery provided for delete all")
+		return 0, errors.New("todolist: no taskQuery provided for delete all")
 	}
 
 	queries.SetDelete(q.Query)
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to delete all from tasks")
+		return 0, errors.Wrap(err, "todolist: unable to delete all from tasks")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: failed to get rows affected by deleteall for tasks")
+		return 0, errors.Wrap(err, "todolist: failed to get rows affected by deleteall for tasks")
 	}
 
 	return rowsAff, nil
@@ -722,7 +721,7 @@ func (q taskQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o TaskSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
-		return 0, errors.New("record: no Task slice provided for delete all")
+		return 0, errors.New("todolist: no Task slice provided for delete all")
 	}
 
 	if len(o) == 0 {
@@ -753,12 +752,12 @@ func (o TaskSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "record: unable to delete all from task slice")
+		return 0, errors.Wrap(err, "todolist: unable to delete all from task slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "record: failed to get rows affected by deleteall for tasks")
+		return 0, errors.Wrap(err, "todolist: failed to get rows affected by deleteall for tasks")
 	}
 
 	if len(taskAfterDeleteHooks) != 0 {
@@ -805,7 +804,7 @@ func (o *TaskSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 
 	err := q.Bind(ctx, exec, &slice)
 	if err != nil {
-		return errors.Wrap(err, "record: unable to reload all in TaskSlice")
+		return errors.Wrap(err, "todolist: unable to reload all in TaskSlice")
 	}
 
 	*o = slice
@@ -827,7 +826,7 @@ func TaskExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, e
 
 	err := row.Scan(&exists)
 	if err != nil {
-		return false, errors.Wrap(err, "record: unable to check if tasks exists")
+		return false, errors.Wrap(err, "todolist: unable to check if tasks exists")
 	}
 
 	return exists, nil

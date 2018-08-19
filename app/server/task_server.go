@@ -3,10 +3,10 @@ package server
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/volatiletech/sqlboiler/boil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -30,18 +30,16 @@ type taskServiceServerImpl struct {
 func (s *taskServiceServerImpl) ListTasks(ctx context.Context, req *api_pb.ListTasksRequest) (*api_pb.ListTasksResponse, error) {
 	db, err := sql.Open("postgres", `dbname=todolist host=localhost sslmode=disable`)
 	if err != nil {
-		fmt.Println("32: ", err)
 		panic(err)
 	}
 
-	dbTasks, err := todolist.Tasks().All(context.Background(), db)
+	dbTasks, err := todolist.Tasks().All(ctx, db)
 	if err != nil {
-		fmt.Println("39: ", err)
 		panic(err)
 	}
 
 	return &api_pb.ListTasksResponse{
-		Tasks: util.TasksToPB(context.Background(), dbTasks),
+		Tasks: util.TasksToPB(ctx, dbTasks),
 	}, nil
 }
 
@@ -51,8 +49,20 @@ func (s *taskServiceServerImpl) GetTask(ctx context.Context, req *api_pb.GetTask
 }
 
 func (s *taskServiceServerImpl) CreateTask(ctx context.Context, req *api_pb.CreateTaskRequest) (*api_pb.Task, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	db, err := sql.Open("postgres", `dbname=todolist host=localhost sslmode=disable`)
+	if err != nil {
+		panic(err)
+	}
+
+	var task todolist.Task
+	task.Title = "test"
+
+	err = task.Insert(ctx, db, boil.Infer())
+	if err != nil {
+		panic(err)
+	}
+
+	return util.TaskToPB(ctx, &task), nil
 }
 
 func (s *taskServiceServerImpl) UpdateTask(ctx context.Context, req *api_pb.UpdateTaskRequest) (*api_pb.Task, error) {

@@ -1,5 +1,5 @@
 output = "app/record/todolist"
-pkgname = "record"
+pkgname = "todolist"
 
 [psql]
   dbname = "todolist"

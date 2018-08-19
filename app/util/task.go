@@ -21,20 +21,10 @@ func TasksToPB(ctx context.Context, tasks []*todolist.Task) []*api_pb.Task {
 
 //hogehoge
 func TaskToPB(ctx context.Context, task *todolist.Task) *api_pb.Task {
-	var title string
-	if task.Title.Valid {
-		title = task.Title.String
-	}
-
-	var createdAt time.Time
-	if task.CreatedAt.Valid {
-		createdAt = task.CreatedAt.Time
-	}
-
 	pb := &api_pb.Task{
 		TaskId:    string(task.ID),
-		Title:     title,
-		CreatedAt: createdAt.Format(time.RFC3339),
+		Title:     task.Title,
+		CreatedAt: task.CreatedAt.Format(time.RFC3339),
 	}
 
 	return pb
