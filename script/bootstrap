@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+psql -c "CREATE DATABASE todolist"
+psql -c "CREATE USER liam"
+goose up
