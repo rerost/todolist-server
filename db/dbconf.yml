@@ -1,0 +1,22 @@
+
+test:
+    driver: postgres
+    open: user=liam dbname=todolist sslmode=disable
+
+development:
+    driver: postgres
+    open: user=liam dbname=todolist sslmode=disable
+    
+production:
+    driver: postgres
+    open: user=liam dbname=todolist sslmode=verify-full
+
+customimport:
+    driver: customdriver
+    open: customdriver open
+    import: github.com/custom/driver
+    dialect: mysql
+
+environment_variable_config:
+    driver: $DB_DRIVER
+    open: $DATABASE_URL
