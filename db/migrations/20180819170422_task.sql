@@ -2,7 +2,7 @@
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
 CREATE TABLE tasks (
-  id integer,
+  id integer NOT NULL PRIMARY KEY,
   title text,
   created_at timestamp
 );
