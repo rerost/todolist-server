@@ -23,8 +23,11 @@ type taskServiceServerImpl struct {
 }
 
 func (s *taskServiceServerImpl) ListTasks(ctx context.Context, req *api_pb.ListTasksRequest) (*api_pb.ListTasksResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	return &api_pb.ListTasksResponse{
+		Tasks: []*api_pb.Task{
+			{TaskId: "1", Title: "test"},
+		},
+	}, nil
 }
 
 func (s *taskServiceServerImpl) GetTask(ctx context.Context, req *api_pb.GetTaskRequest) (*api_pb.Task, error) {
