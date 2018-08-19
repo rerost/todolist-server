@@ -1,0 +1,11 @@
+output = "app/record/todolist"
+pkgname = "record"
+
+[psql]
+  dbname = "todolist"
+  host = "localhost"
+  port = 5432
+  user = "postgres"
+  pass = ""
+  sslmode = "disable"
+  blacklist = ["goose_db_version", "goose_db_version_id_seq"]
