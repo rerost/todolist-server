@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -13,6 +14,7 @@ import (
 	api_pb "github.com/rerost/todolist-server/api"
 	"github.com/rerost/todolist-server/app/record/todolist"
 	"github.com/volatiletech/null"
+	"google.golang.org/genproto/protobuf/field_mask"
 )
 
 //hogehoge
@@ -97,4 +99,18 @@ func PBTaskToTask(ctx context.Context, pbTask *api_pb.Task) *todolist.Task {
 		Deadline:  deadline,
 		Note:      note,
 	}
+}
+
+// GetTasks is return api's taksks
+func GetTasks(ctx context.Context, db *sql.DB, fieldMask *field_mask.FieldMask) ([]*api_pb.Task, error) {
+	// dbTasks, err := todolist.Tasks().All(ctx, db)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// resp := &api_pb.ListTasksResponse{
+	// 	Tasks: tasks,
+	// }
+
+	return []*api_pb.Task{}, nil
 }
