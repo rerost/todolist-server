@@ -33,7 +33,7 @@ func (s *taskServiceServerImpl) ListTasks(ctx context.Context, req *api_pb.ListT
 	}
 
 	tasks, err := util.GetTasks(ctx, db, req.Fields)
-	return &api_pb.ListTasksResponse{Tasks: tasks}, nil
+	return &api_pb.ListTasksResponse{Tasks: tasks}, err
 }
 
 func (s *taskServiceServerImpl) GetTask(ctx context.Context, req *api_pb.GetTaskRequest) (*api_pb.Task, error) {

@@ -3,6 +3,7 @@ package util
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -15,6 +16,8 @@ import (
 	"github.com/rerost/todolist-server/app/record/todolist"
 	"github.com/volatiletech/null"
 	"google.golang.org/genproto/protobuf/field_mask"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 //hogehoge
@@ -108,8 +111,41 @@ func GetTasks(ctx context.Context, db *sql.DB, fieldMask *field_mask.FieldMask) 
 	if err != nil {
 		panic(err)
 	}
+	pbTasks := TasksToPB(ctx, dbTasks)
 
-	// TODO(@rerost) まずはfieldMaskにないカラムを全てリセットする
+	maskedTasks, err := MaskTasks(pbTasks, fieldMask)
 
-	return TasksToPB(ctx, dbTasks), nil
+	return maskedTasks, err
+}
+
+func MaskTasks(tasks []*api_pb.Task, fieldMask *field_mask.FieldMask) ([]*api_pb.Task, error) {
+	maskedTasks := make([]*api_pb.Task, len(tasks), len(tasks))
+	for i, task := range tasks {
+		var err error
+		maskedTasks[i], err = MaskTask(task, fieldMask)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return maskedTasks, nil
+}
+func MaskTask(task *api_pb.Task, fieldMask *field_mask.FieldMask) (*api_pb.Task, error) {
+	maskedTask := api_pb.Task{}
+	for _, accepetedField := range fieldMask.Paths {
+		// TODO(@rerost) Generate Automaticaly
+		switch accepetedField {
+		case "task_id":
+			maskedTask.TaskId = task.TaskId
+		case "title":
+			maskedTask.Title = task.Title
+		case "created_at":
+			maskedTask.CreatedAt = task.CreatedAt
+		case "deadline":
+			maskedTask.Deadline = task.Deadline
+		default:
+			return nil, status.Error(codes.Unimplemented, fmt.Sprintf("Received Unimplemented field: %s", accepetedField))
+		}
+	}
+	return &maskedTask, nil
 }
