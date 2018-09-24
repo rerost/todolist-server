@@ -103,14 +103,13 @@ func PBTaskToTask(ctx context.Context, pbTask *api_pb.Task) *todolist.Task {
 
 // GetTasks is return api's taksks
 func GetTasks(ctx context.Context, db *sql.DB, fieldMask *field_mask.FieldMask) ([]*api_pb.Task, error) {
-	// dbTasks, err := todolist.Tasks().All(ctx, db)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	// TODO(@rerost) 取得するカラムを絞り込む
+	dbTasks, err := todolist.Tasks().All(ctx, db)
+	if err != nil {
+		panic(err)
+	}
 
-	// resp := &api_pb.ListTasksResponse{
-	// 	Tasks: tasks,
-	// }
+	// TODO(@rerost) まずはfieldMaskにないカラムを全てリセットする
 
-	return []*api_pb.Task{}, nil
+	return TasksToPB(ctx, dbTasks), nil
 }
