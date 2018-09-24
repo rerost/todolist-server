@@ -131,6 +131,10 @@ func MaskTasks(tasks []*api_pb.Task, fieldMask *field_mask.FieldMask) ([]*api_pb
 	return maskedTasks, nil
 }
 func MaskTask(task *api_pb.Task, fieldMask *field_mask.FieldMask) (*api_pb.Task, error) {
+	if fieldMask == nil {
+		return task, nil
+	}
+
 	maskedTask := api_pb.Task{}
 	for _, accepetedField := range fieldMask.Paths {
 		// TODO(@rerost) Generate Automaticaly

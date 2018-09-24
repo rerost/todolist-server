@@ -27,6 +27,7 @@ func TestMaskTask(t *testing.T) {
 					Title:  "test",
 				},
 				fieldMask: &field_mask.FieldMask{Paths: []string{"task_id", "title"}},
+			},
 			out: &api_pb.Task{
 				TaskId: 1,
 				Title:  "test",
@@ -58,7 +59,10 @@ func TestMaskTask(t *testing.T) {
 		},
 	}
 	for _, inOutPair := range inOutPairs {
-		out := util.MaskTask(inOutPair.in.task, inOutPair.in.fieldMask)
+		out, err := util.MaskTask(inOutPair.in.task, inOutPair.in.fieldMask)
+		if err != nil {
+			t.Errorf("%s: occured error: %v", inOutPair.test, err)
+		}
 		if !cmp.Equal(out, inOutPair.out) {
 			t.Errorf("%s: %s", inOutPair.test, cmp.Diff(out, inOutPair.out))
 		}
