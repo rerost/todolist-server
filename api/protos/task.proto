@@ -40,7 +40,7 @@ service TaskService {
 message Task {
   int64 task_id = 1;
   string title = 2;
-  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp created_at = 3;
   google.protobuf.Timestamp deadline = 4;
   google.protobuf.StringValue note = 5;
 }
