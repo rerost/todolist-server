@@ -568,7 +568,7 @@ func testTasksSelect(t *testing.T) {
 }
 
 var (
-	taskDBTypes = map[string]string{`CreatedAt`: `timestamp without time zone`, `ID`: `integer`, `Title`: `text`}
+	taskDBTypes = map[string]string{`CreatedAt`: `timestamp without time zone`, `Deadline`: `timestamp without time zone`, `ID`: `integer`, `Title`: `text`}
 	_           = bytes.MinRead
 )
 

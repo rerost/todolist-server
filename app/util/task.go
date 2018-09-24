@@ -2,12 +2,15 @@ package util
 
 import (
 	"context"
-	"fmt"
+	"time"
+
+	"github.com/golang/protobuf/ptypes/timestamp"
 
 	"github.com/golang/protobuf/ptypes"
 
 	api_pb "github.com/rerost/todolist-server/api"
 	"github.com/rerost/todolist-server/app/record/todolist"
+	"github.com/volatiletech/null"
 )
 
 //hogehoge
@@ -29,10 +32,21 @@ func TaskToPB(ctx context.Context, task *todolist.Task) *api_pb.Task {
 		// When error occured, db's time is not valid
 		panic(err)
 	}
+
+	var deadline *timestamp.Timestamp
+	if task.Deadline.Valid {
+		deadline, err = ptypes.TimestampProto(task.Deadline.Time)
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	pb := &api_pb.Task{
 		TaskId:    int64(task.ID),
 		Title:     task.Title,
 		CreatedAt: createdAt,
+		Deadline:  deadline,
 	}
 
 	return pb
@@ -40,22 +54,33 @@ func TaskToPB(ctx context.Context, task *todolist.Task) *api_pb.Task {
 
 // PBTaskToTask is hogehoge
 func PBTaskToTask(ctx context.Context, pbTask *api_pb.Task) *todolist.Task {
-	createdAt, err := ptypes.Timestamp(pbTask.CreatedAt)
-	if err != nil {
-		panic(err)
+	if pbTask == nil {
+		return nil
+	}
+
+	var createdAt time.Time
+	if pbTask.CreatedAt != nil {
+		t, err := ptypes.Timestamp(pbTask.CreatedAt)
+		if err != nil {
+			panic(err)
+		}
+		createdAt = t
+	}
+
+	var deadline null.Time
+	if pbTask.Deadline != nil {
+		t, err := ptypes.Timestamp(pbTask.Deadline)
+		if err != nil {
+			panic(err)
+		}
+
+		deadline = null.TimeFrom(t)
 	}
 
 	return &todolist.Task{
 		ID:        int(pbTask.TaskId),
 		Title:     pbTask.Title,
 		CreatedAt: createdAt,
-	}
-}
-
-// TODO: Replace
-func check(err error) {
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		Deadline:  deadline,
 	}
 }
