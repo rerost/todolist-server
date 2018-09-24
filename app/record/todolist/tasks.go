@@ -23,10 +23,11 @@ import (
 
 // Task is an object representing the database table.
 type Task struct {
-	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Title     string    `boil:"title" json:"title" toml:"title" yaml:"title"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	Deadline  null.Time `boil:"deadline" json:"deadline,omitempty" toml:"deadline" yaml:"deadline,omitempty"`
+	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Title     string      `boil:"title" json:"title" toml:"title" yaml:"title"`
+	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	Deadline  null.Time   `boil:"deadline" json:"deadline,omitempty" toml:"deadline" yaml:"deadline,omitempty"`
+	Note      null.String `boil:"note" json:"note,omitempty" toml:"note" yaml:"note,omitempty"`
 
 	R *taskR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L taskL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -37,11 +38,13 @@ var TaskColumns = struct {
 	Title     string
 	CreatedAt string
 	Deadline  string
+	Note      string
 }{
 	ID:        "id",
 	Title:     "title",
 	CreatedAt: "created_at",
 	Deadline:  "deadline",
+	Note:      "note",
 }
 
 // TaskRels is where relationship names are stored.
@@ -61,8 +64,8 @@ func (*taskR) NewStruct() *taskR {
 type taskL struct{}
 
 var (
-	taskColumns               = []string{"id", "title", "created_at", "deadline"}
-	taskColumnsWithoutDefault = []string{"title", "created_at", "deadline"}
+	taskColumns               = []string{"id", "title", "created_at", "deadline", "note"}
+	taskColumnsWithoutDefault = []string{"title", "created_at", "deadline", "note"}
 	taskColumnsWithDefault    = []string{"id"}
 	taskPrimaryKeyColumns     = []string{"id"}
 )
