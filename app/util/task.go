@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
+
 	"github.com/golang/protobuf/ptypes/timestamp"
 
 	"github.com/golang/protobuf/ptypes"
@@ -42,11 +44,17 @@ func TaskToPB(ctx context.Context, task *todolist.Task) *api_pb.Task {
 		}
 	}
 
+	var note *wrappers.StringValue
+	if task.Note.Valid {
+		note = &wrappers.StringValue{Value: task.Note.String}
+	}
+
 	pb := &api_pb.Task{
 		TaskId:    int64(task.ID),
 		Title:     task.Title,
 		CreatedAt: createdAt,
 		Deadline:  deadline,
+		Note:      note,
 	}
 
 	return pb
@@ -77,10 +85,16 @@ func PBTaskToTask(ctx context.Context, pbTask *api_pb.Task) *todolist.Task {
 		deadline = null.TimeFrom(t)
 	}
 
+	var note null.String
+	if pbTask.Note != nil {
+		note = null.StringFrom(pbTask.Note.Value)
+	}
+
 	return &todolist.Task{
 		ID:        int(pbTask.TaskId),
 		Title:     pbTask.Title,
 		CreatedAt: createdAt,
 		Deadline:  deadline,
+		Note:      note,
 	}
 }
