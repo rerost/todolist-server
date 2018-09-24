@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/field_mask.proto";
 
 service TaskService {
   rpc ListTasks (ListTasksRequest) returns (ListTasksResponse) {
@@ -46,6 +47,7 @@ message Task {
 }
 
 message ListTasksRequest {
+  google.protobuf.FieldMask fields = 1;
 }
 
 message ListTasksResponse {

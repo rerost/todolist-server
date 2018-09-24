@@ -12,7 +12,6 @@ import (
 
 	_ "github.com/bmizerany/pq"
 	api_pb "github.com/rerost/todolist-server/api"
-	"github.com/rerost/todolist-server/app/record/todolist"
 	"github.com/rerost/todolist-server/app/util"
 )
 
@@ -33,14 +32,8 @@ func (s *taskServiceServerImpl) ListTasks(ctx context.Context, req *api_pb.ListT
 		panic(err)
 	}
 
-	dbTasks, err := todolist.Tasks().All(ctx, db)
-	if err != nil {
-		panic(err)
-	}
-
-	return &api_pb.ListTasksResponse{
-		Tasks: util.TasksToPB(ctx, dbTasks),
-	}, nil
+	tasks, err := util.GetTasks(ctx, db, req.Fields)
+	return &api_pb.ListTasksResponse{Tasks: tasks}, err
 }
 
 func (s *taskServiceServerImpl) GetTask(ctx context.Context, req *api_pb.GetTaskRequest) (*api_pb.Task, error) {
