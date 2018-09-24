@@ -71,7 +71,8 @@
             "name": "task.task_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "body",
@@ -158,13 +159,15 @@
       "type": "object",
       "properties": {
         "task_id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         },
         "title": {
           "type": "string"
         },
         "createdAt": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
