@@ -113,6 +113,14 @@
   revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
 
 [[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  pruneopts = ""
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
   digest = "1:a371882b9a0485fc14a258415a594c39c6d6732d634c6754e0b9c71466d3233c"
   name = "github.com/izumin5210/grapi"
   packages = [
@@ -202,6 +210,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:a1403cc8a94b8d7956ee5e9694badef0e7b051af289caad1cf668331e3ffa4f6"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  pruneopts = ""
+  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
+
+[[projects]]
   branch = "master"
   digest = "1:49d1a9ccb9502d5ce81e7ae622211c496612970bbbfd1c9e4065e6ec13c3d030"
   name = "github.com/spf13/jwalterweatherman"
@@ -234,10 +250,23 @@
   revision = "e7201282ae8da26cd97aed2e516f75c0bd91bb93"
 
 [[projects]]
+  digest = "1:3610e24260db9be91620fb8f3958c2048cc8856b10037112b2d279cb0b550c1b"
+  name = "github.com/volatiletech/null"
+  packages = [
+    ".",
+    "convert",
+  ]
+  pruneopts = ""
+  revision = "0681ee3b5e046ac8bfbbd3999e79d3905e96972f"
+  version = "v8.0.0"
+
+[[projects]]
   digest = "1:51623c54ce4eeabd7e1d2a5dd8ccb1bc165cb8f721e169349b3a59020a719a8b"
   name = "github.com/volatiletech/sqlboiler"
   packages = [
+    ".",
     "boil",
+    "boilingcore",
     "drivers",
     "drivers/sqlboiler-psql/driver",
     "importers",
@@ -245,6 +274,7 @@
     "queries/qm",
     "randomize",
     "strmangle",
+    "templatebin",
   ]
   pruneopts = ""
   revision = "7d3d954a4be10dc06b9464fb3e6d74836274c467"
@@ -372,6 +402,8 @@
     "github.com/lib/pq",
     "github.com/pkg/errors",
     "github.com/spf13/viper",
+    "github.com/volatiletech/null",
+    "github.com/volatiletech/sqlboiler",
     "github.com/volatiletech/sqlboiler/boil",
     "github.com/volatiletech/sqlboiler/drivers",
     "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver",
