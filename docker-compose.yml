@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:11-alpine
+    ports: 
+      - 5432:5432
+    # command:
+  todolist-server:
+    environment:
+      - DB_HOST=postgres
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+      - 5001:5001
+    depends_on:
+      - postgres
+  envoy:
+    build:
+      context: ./rid/libexec/envoy
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+      - 10000:10000
+      - 9901:9901
+    depends_on:
+      - todolist-server
+  grpc_cli:
+    build:
+      context: ${GOPATH}/src/github.com/bvanvugt/docker-grpc-cli
+      dockerfile: ./Dockerfile
