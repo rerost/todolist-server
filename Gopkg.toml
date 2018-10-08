@@ -16,3 +16,7 @@ required = [
 [[constraint]]
   name = "github.com/google/go-cmp"
   version = "v0.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "bitbucket.org/liamstask/goose"
