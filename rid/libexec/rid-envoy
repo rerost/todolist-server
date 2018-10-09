@@ -1,0 +1,54 @@
+#!/bin/sh
+
+set -eu
+set -o pipefail
+
+NAME=todolist-server-envoy
+IMAGE=todolist-server-envoy
+
+CURRENT_FILE_PATH=$(dirname $0)
+
+server_stop() {
+  echo "-----Stoping server-----"
+  docker stop $NAME
+}
+
+server_start() {
+  echo "-----Starting server-----"
+  docker start $NAME 2>/dev/null || server_create
+}
+
+server_destory() {
+  echo "-----Destroying server-----"
+  docker rm $NAME || (server_stop && docker rm $NAME)
+  docker rmi $NAME
+}
+
+server_create() {
+  echo "-----Creating server-----"
+  docker build -t $IMAGE ${CURRENT_FILE_PATH}/envoy/
+  docker run \
+    --name=$NAME \
+    -d \
+    -p 8080:8080 \
+    -p 10000:10000 \
+    -p 9901:9901 \
+    -p 5001:5001 \
+    $IMAGE
+}
+
+server_restart() {
+  echo "-----Restarting server-----"
+  server_destory && server_create
+}
+
+COMMAND="${1:-}"
+shift || true
+
+case "$COMMAND" in
+  start)    server_start ;;
+  stop)     server_stop ;;
+  destroy)  server_destory ;;
+  create)   server_create ;;
+  restart)  server_restart ;;
+esac

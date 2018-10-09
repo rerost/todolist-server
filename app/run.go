@@ -9,6 +9,7 @@ import (
 func Run() error {
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
+		grapiserver.WithGrpcAddr("tcp", ":5001"),
 		grapiserver.WithServers(
 			server.NewTaskServiceServer(),
 		),

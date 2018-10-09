@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"os"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
@@ -14,6 +16,12 @@ import (
 	api_pb "github.com/rerost/todolist-server/api"
 	"github.com/rerost/todolist-server/app/util"
 )
+
+var dbhost string
+
+func init() {
+	dbhost = os.Getenv("DB_HOST")
+}
 
 // NewTaskServiceServer creates a new TaskServiceServer instance.
 func NewTaskServiceServer() interface {
@@ -27,7 +35,7 @@ type taskServiceServerImpl struct {
 }
 
 func (s *taskServiceServerImpl) ListTasks(ctx context.Context, req *api_pb.ListTasksRequest) (*api_pb.ListTasksResponse, error) {
-	db, err := sql.Open("postgres", `dbname=todolist host=localhost sslmode=disable`)
+	db, err := sql.Open("postgres", fmt.Sprintf(`dbname=todolist host=%s user=liam sslmode=disable`, dbhost))
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +50,7 @@ func (s *taskServiceServerImpl) GetTask(ctx context.Context, req *api_pb.GetTask
 }
 
 func (s *taskServiceServerImpl) CreateTask(ctx context.Context, req *api_pb.CreateTaskRequest) (*api_pb.Task, error) {
-	db, err := sql.Open("postgres", `dbname=todolist host=localhost sslmode=disable`)
+	db, err := sql.Open("postgres", fmt.Sprintf(`dbname=todolist host=%s user=liam sslmode=disable`, dbhost))
 	if err != nil {
 		panic(err)
 	}

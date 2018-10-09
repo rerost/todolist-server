@@ -1,0 +1,5 @@
+#/bin/bash
+
+psql -h localhost -p 5432 -U postgres -c "CREATE DATABASE todolist"
+psql -h localhost -p 5432 -U postgres -c "CREATE USER liam"
+goose up

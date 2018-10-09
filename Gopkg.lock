@@ -3,6 +3,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:76839c588e1f08b4166968c9ca79b9571322ce4ec9193183891cda68acde406a"
+  name = "bitbucket.org/liamstask/goose"
+  packages = [
+    "cmd/goose",
+    "lib/goose",
+  ]
+  pruneopts = ""
+  revision = "8488cc47d90c8a502b1c41a462a6d9cc8ee0a895"
+
+[[projects]]
+  branch = "master"
   digest = "1:9c5e1ea4e280059da3f0c0c35c0d21f45d02b4971aa8deef5837b7b52c086740"
   name = "github.com/bmizerany/pq"
   packages = ["."]
@@ -24,6 +35,14 @@
   pruneopts = ""
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
   version = "v1.0.0"
+
+[[projects]]
+  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  pruneopts = ""
+  revision = "d523deb1b23d913de5bdada721a6071e71283618"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:12d4e9935465aa06981db1c4997e0ba2d91e011b0d589b746a85dd604c9fd024"
@@ -155,6 +174,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:72ac8b303addf8e2ba29c3fab8feb6630d05b272ae07f9f60b281ad9ee97b61f"
+  name = "github.com/kylelemons/go-gypsy"
+  packages = ["yaml"]
+  pruneopts = ""
+  revision = "08cad365cd28a7fba23bb1e57aa43c5e18ad8bb8"
+
+[[projects]]
+  branch = "master"
   digest = "1:09792d732b079867772cdbabdf7dc54ef9f9d04c998a9ce6226657151fccbb94"
   name = "github.com/lib/pq"
   packages = [
@@ -171,6 +198,14 @@
   pruneopts = ""
   revision = "c2353362d570a7bfa228149c62842019201cfb71"
   version = "v1.8.0"
+
+[[projects]]
+  digest = "1:bc03901fc8f0965ccba8bc453eae21a9b04f95999eab664c7de6dc7290f4e8f4"
+  name = "github.com/mattn/go-sqlite3"
+  packages = ["."]
+  pruneopts = ""
+  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
+  version = "v1.9.0"
 
 [[projects]]
   branch = "master"
@@ -295,6 +330,18 @@
   version = "v3.0.0"
 
 [[projects]]
+  digest = "1:2a34b37d017e0e03a1683598ce909369e04a84bd082ccab9528dd68ed384b987"
+  name = "github.com/ziutek/mymysql"
+  packages = [
+    "godrv",
+    "mysql",
+    "native",
+  ]
+  pruneopts = ""
+  revision = "e08c2f35356576b3c3690c252fe5dca728ae9292"
+  version = "v1.5.4"
+
+[[projects]]
   branch = "master"
   digest = "1:4f7d853903a2a32b60c99f92492752a52bf9b56425258afbed5cfc2ee86cd216"
   name = "golang.org/x/net"
@@ -340,6 +387,14 @@
   pruneopts = ""
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
+
+[[projects]]
+  digest = "1:8c432632a230496c35a15cfdf441436f04c90e724ad99c8463ef0c82bbe93edb"
+  name = "google.golang.org/appengine"
+  packages = ["cloudsql"]
+  pruneopts = ""
+  revision = "ae0ab99deb4dc413a2b4bd6c8bdd0eb67f1e4d06"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
@@ -402,6 +457,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "bitbucket.org/liamstask/goose/cmd/goose",
     "github.com/bmizerany/pq",
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/protoc-gen-go",

@@ -1,19 +1,19 @@
 
 test:
     driver: postgres
-    open: user=liam dbname=todolist sslmode=disable
+    open: postgresql://liam@localhost:5432/todolist?sslmode=disable
 
 development:
     driver: postgres
-    open: user=liam dbname=todolist sslmode=disable
+    open: postgresql://liam@localhost:5432/todolist?sslmode=disable
     
 production:
     driver: postgres
-    open: user=liam dbname=todolist sslmode=verify-full
+    open: postgresql://liam@localhost:5432/todolist?sslmode=disable
 
 customimport:
     driver: customdriver
-    open: customdriver open
+    open: postgresql://liam@localhost:5432/todolist?sslmode=disable
     import: github.com/custom/driver
     dialect: mysql
 
