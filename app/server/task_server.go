@@ -74,3 +74,16 @@ func (s *taskServiceServerImpl) DeleteTask(ctx context.Context, req *api_pb.Dele
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
+
+func (s *taskServiceServerImpl) StreamTask(req *api_pb.CreateTaskRequest, stream api_pb.TaskService_StreamTaskServer) error {
+	db, err := sql.Open("postgres", fmt.Sprintf(`dbname=todolist host=%s user=liam sslmode=disable`, dbhost))
+	if err != nil {
+		panic(err)
+	}
+
+	tasks, err := util.GetTasks(context.Background(), db, nil)
+	for _, t := range tasks {
+		stream.Send(t)
+	}
+	return nil
+}
