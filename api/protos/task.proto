@@ -36,6 +36,8 @@ service TaskService {
       delete: "/tasks/{task_id}"
     };
   }
+  rpc StreamTask(CreateTaskRequest) returns (stream Task){
+  }
 }
 
 message Task {
